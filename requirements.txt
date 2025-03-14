@@ -1,0 +1,5 @@
+dash
+pandas
+dash_bootstrap_components
+openpyxl  # Pour lire les fichiers Excel
+gunicorn  # Serveur pour exécuter l'app sur Render

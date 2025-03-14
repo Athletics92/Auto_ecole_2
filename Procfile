@@ -1,0 +1,1 @@
+web: gunicorn DASH_AUTO_ECOLE:server --bind 0.0.0.0:$PORT
