@@ -233,7 +233,8 @@ app.layout = dbc.Container(
             )
         ], className="g-3")
     ],
-    fluid=True
+    fluid=True,
+    className="responsive-container"
 )
 
 # 📌 Callback pour filtrer `fig_donut` en fonction de la Localisation sélectionnée
@@ -332,6 +333,7 @@ def update_graph_reussite(selected_location):
 
 
 # CSS pour la mise en forme responsive
+# Ajout du CSS pour améliorer le responsive
 app.index_string = '''
 <!DOCTYPE html>
 <html>
@@ -343,26 +345,21 @@ app.index_string = '''
     {%css%}
     <style>
         body { background-color: #d3d3d3; }
-        .header-banner {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-            background-color: white;
-            padding: 15px;
-            border-radius: 5px;
-            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-        }
+        .responsive-container { padding: 10px; }
         .info-box {
             font-weight: bold;
             font-size: 1.2rem;
-            flex: 1;
-            min-width: 250px;
             text-align: center;
-            margin: 10px;
+            margin: 10px auto;
             padding: 15px;
             border-radius: 10px;
             background-color: #2C3E50;
             color: white;
+            max-width: 90%;
+        }
+        @media (max-width: 768px) {
+            .info-box { font-size: 1rem; }
+            .g-3 .p-2 { padding: 5px !important; }
         }
     </style>
 </head>
