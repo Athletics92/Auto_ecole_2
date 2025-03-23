@@ -1,6 +1,7 @@
 dash
 pandas
 dash_bootstrap_components
+dash_html_components
 dash_core_components
 openpyxl  # Pour lire les fichiers Excel
 gunicorn  # Serveur pour exécuter l'app sur Render
