@@ -171,12 +171,17 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 
 # Graphiques fig_signature, graph_code, graph_donut et graph_inscriptions mis à jour dynamiquement
-graph_signature = dcc.Graph(id="graph_signature",figure=fig_signature,style={'width': '100%', 'height': '300px'})
-graph_reussite = dcc.Graph(id="graph_reussite",figure=fig_reussite,style={'width': '100%', 'height': '300px'})
-graph_donut = dcc.Graph(id="graph_donut",figure=fig_donut,style={'width': '100%', 'height': '300px'})
-graph_inscriptions = dcc.Graph(figure=fig_inscriptions,style={'width': '100%', 'height': '300px'})
-    
+graph_signature = dcc.Loading(type="circle",children=dcc.Graph(id="graph_signature", figure=fig_signature
+                                            ,style={'width': '100%', 'height': '300px'}, config={'responsive': True}))
 
+graph_reussite = dcc.Loading(type="circle",children=dcc.Graph(id="graph_reussite", figure=fig_reussite
+                                            ,style={'width': '100%', 'height': '300px'}, config={'responsive': True}))
+
+graph_donut = dcc.Loading(type="circle",children=dcc.Graph(id="graph_donut", figure=fig_donut
+                                            ,style={'width': '100%', 'height': '300px'}, config={'responsive': True}))
+
+graph_inscriptions = dcc.Loading(type="circle",children=dcc.Graph(id="graph_inscriptions", figure=fig_inscriptions
+                                            ,style={'width': '100%', 'height': '300px'}, config={'responsive': True}))
 
 # Libellés propres
 fig_inscriptions.update_layout(yaxis_title="Nb élèves")
@@ -374,6 +379,13 @@ app.index_string = '''
         .VirtualizedSelectOption:hover { background-color: #3498DB !important; color: black !important; }
         .Select-value-label { color: white !important; }
     </style>
+    <script>
+        window.onload = function() {
+            setTimeout(function() {
+                window.dispatchEvent(new Event('resize'));
+            }, 500);
+        };
+    </script>
 </head>
 <body>
     {%app_entry%}
