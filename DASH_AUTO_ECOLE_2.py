@@ -176,6 +176,15 @@ graph_reussite = dcc.Graph(id="graph_reussite",figure=fig_reussite,style={'width
 graph_donut = dcc.Graph(id="graph_donut",figure=fig_donut,style={'width': '100%', 'height': '300px'})
 graph_inscriptions = dcc.Graph(figure=fig_inscriptions,style={'width': '100%', 'height': '300px'})
     
+
+
+# Libellés propres
+fig_inscriptions.update_layout(yaxis_title="Nb élèves")
+fig_reussite.update_layout(yaxis_title="Nb élèves")
+fig_signature.update_layout(yaxis_title="Nb élèves")
+fig_code.update_layout(yaxis_title="Nb élèves")
+fig_donut.update_layout(yaxis_title="Nb élèves")
+    
     
 app.layout = dbc.Container(
     [
@@ -189,33 +198,48 @@ app.layout = dbc.Container(
                     "en AAC soit ",
                     html.Span(f"{encarts['parts_inscrits_AAC'][0]}", className="highlight")
                 ])
-            ], className="info-box"), width=4),
+            ], style={
+                'background-color': '#2C3E50',
+                'color': 'white',
+                'padding': '15px',
+                'border-radius': '10px',
+                'text-align': 'center',
+                'font-weight': 'bold',
+                'font-size': '1.2rem'
+                    }), width=4),
             
             dbc.Col(html.Div([
                 html.P([
                     html.Span(f"{encarts['nb_15h_25h'][0]} ", className="highlight"),
                     "élèves entre 15h et 25h de conduite."
                 ])
-            ], className="info-box"), width=4),
+            ], style={
+                'background-color': '#2C3E50',
+                'color': 'white',
+                'padding': '15px',
+                'border-radius': '10px',
+                'text-align': 'center',
+                'font-weight': 'bold',
+                'font-size': '1.2rem'
+                    }), width=4),
             
             # Menu déroulant pour filtrer par Localisation
-            dbc.Col(html.Div([
-                dcc.Dropdown(
-                    id="dropdown-localisation",
-                    options=[{"label": loc, "value": loc} for loc in sorted(df["Localisation"].unique())],
-                    value=None,
-                    placeholder="Sélectionnez une Localisation",
-                    style={
-                        'width': '100%', 
-                        'font-size': '16px', 
-                        'background-color': '#2C3E50',  
-                        'color': 'white',  
-                        'border': '1px solid #3498DB',  
-                    },
-                    className="custom-dropdown"
-                )
-            ], className="info-box"), width=4)
-        ], className="g-3"),
+           dbc.Col(html.Div([
+            dcc.Dropdown(
+                id="dropdown-localisation",
+                options=[{"label": loc, "value": loc} for loc in sorted(df["Localisation"].unique())],
+                value=None,
+                placeholder="Sélectionnez une Localisation",
+                style={
+                    'width': '100%',
+                    'font-size': '16px',
+                    'background-color': '#2C3E50',
+                    'color': 'white',
+                    'border': '1px solid #3498DB',
+                },
+            )
+        ], className="info-box", style={'margin-top': '30px'}), width=4)
+    ], className="g-3"),
 
         # Graphiques
         dbc.Row([
@@ -226,7 +250,7 @@ app.layout = dbc.Container(
 
         # Ligne 2 : Colonne de gauche empilée avec fig_code et fig_donut, colonne de droite avec la carte
         dbc.Row([
-            dbc.Col(graph_donut, width=4, className="p-2"),  
+            dbc.Col(graph_donut, width=4, className="p-2"),  # ✅ Graphique dynamique filtré par Localisation
             dbc.Col(
                 html.Iframe(srcDoc=open(map_html, 'r').read(), width='100%', height='300px'),
                 width=8, className="p-2"
@@ -248,16 +272,16 @@ def update_graph_donut(selected_location):
         dff = dff[dff["Localisation"] == selected_location]
 
     fig = px.pie(
-        dff.groupby("Nb_presentations_code_group").size().reset_index(name="count"),
+        dff.groupby("Nb_presentations_code_group").size().reset_index(name="Nb élèves"),
         names="Nb_presentations_code_group",
-        values="count",
+        values="Nb élèves",
         hole=0.4,
         title="Présentations au code"
     )
 
     fig.update_layout(
         title_x=0.5,
-        showlegend=True,  
+        showlegend=True,  # ✅ On garde la légende pour plus de lisibilité
         plot_bgcolor='#2C3E50',
         paper_bgcolor='#2C3E50',
         font=dict(color='white'),
@@ -278,8 +302,8 @@ def update_graph_signature(selected_location):
         dff = dff[dff["Localisation"] == selected_location]
     
     fig = px.bar(
-        dff.groupby("Cat_Signature").size().reset_index(name="count"),
-        x="Cat_Signature", y="count",
+        dff.groupby("Cat_Signature").size().reset_index(name="Nb élèves"),
+        x="Cat_Signature", y="Nb élèves",
         title="Ancienneté Signature"
     )
 
@@ -289,9 +313,9 @@ def update_graph_signature(selected_location):
         plot_bgcolor='#2C3E50',
         paper_bgcolor='#2C3E50',
         font=dict(color='white'),
-        xaxis_title=None,
-        yaxis_title=None,
-        margin=dict(l=10, r=10, t=40, b=10)  
+        xaxis_title="Nombre de jours",
+        yaxis_title="Nb élèves",
+        margin=dict(l=10, r=10, t=40, b=10)
     )
 
     return fig
@@ -314,7 +338,8 @@ def update_graph_reussite(selected_location):
            dff[dff["Cat_Code"] == "60-90"].shape[0],
            dff[dff["Cat_Code"] == "90-120"].shape[0],
            dff[dff["Cat_Code"] == ">120"].shape[0]],
-        title="Ancienneté Code (en jours)"
+        title="Ancienneté Code (en jours)",
+        labels={"x": "Ancienneté", "y": "Nb élèves"} 
     )
 
     fig.update_layout(
@@ -323,8 +348,8 @@ def update_graph_reussite(selected_location):
         plot_bgcolor='#2C3E50',
         paper_bgcolor='#2C3E50',
         font=dict(color='white'),
-        xaxis_title=None,
-        yaxis_title=None,
+        xaxis_title="Nombre de jours",
+        yaxis_title="Nb élèves",
         margin=dict(l=10, r=10, t=40, b=10)  
     )
 
@@ -332,7 +357,6 @@ def update_graph_reussite(selected_location):
 
 
 
-# CSS pour la mise en forme responsive
 # Ajout du CSS pour améliorer le responsive
 app.index_string = '''
 <!DOCTYPE html>
@@ -345,22 +369,10 @@ app.index_string = '''
     {%css%}
     <style>
         body { background-color: #d3d3d3; }
-        .responsive-container { padding: 10px; }
-        .info-box {
-            font-weight: bold;
-            font-size: 1.2rem;
-            text-align: center;
-            margin: 10px auto;
-            padding: 15px;
-            border-radius: 10px;
-            background-color: #2C3E50;
-            color: white;
-            max-width: 90%;
-        }
-        @media (max-width: 768px) {
-            .info-box { font-size: 1rem; }
-            .g-3 .p-2 { padding: 5px !important; }
-        }
+        .Select-control { background-color: #2C3E50 !important; color: white !important; border: 1px solid #3498DB !important; }
+        .VirtualizedSelectOption { background-color: #2C3E50 !important; color: white !important; }
+        .VirtualizedSelectOption:hover { background-color: #3498DB !important; color: black !important; }
+        .Select-value-label { color: white !important; }
     </style>
 </head>
 <body>
